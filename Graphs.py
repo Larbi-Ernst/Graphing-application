@@ -61,7 +61,7 @@ def gradient_obtain(coordsY,coordsX,category,base,repeat):
             #   print(base)
            #  category = "poly"
             print(Obtained_Values[repeat][0]/math.factorial(base))
-
+            
            
                #if base == 1:
                    #Fact = math.factorial(base)
@@ -108,6 +108,33 @@ def expontential_grad():
      #determine rest of equation through x intercept
 
      #piecewise function in future????
+
+class Data(list):
+    def __new__(self,data):
+        if type(data) != list or any(type(item) not in [int,float,complex] for item in data): 
+            raise TypeError("expected appropriate numerical list data")
+        return super().__new__(self,data)
+    def __init__(self,data):
+        for item in data:
+            self.append(item)
+            
+    def __mul__(self,other):
+        return list(map(lambda item: item*other,self))
+    
+    def __imul__(self,other):
+        New_Data = self * (other)
+        self = Data(New_Data)
+        return self
+    
+    def __truediv__(self,other):
+        return self * (1/other)
+    
+    def __itruediv__(self,other):
+        self *= (1/other)
+        return self
+    
+    
+        
  
 class Graph:
     def __init__(self,**parameters):
@@ -115,8 +142,8 @@ class Graph:
         self.equation = ""
         for name,value in parameters.items():
             setattr(self,name,value)
-        self.coordsX = [coord[0] for coord in self.coords]
-        self.coordsY = [coord[1] for coord in self.coords]
+        self.coordsX = Data([coord[0] for coord in self.coords])
+        self.coordsY = Data([coord[1] for coord in self.coords])
         
     def get_equation(self,**kwargs):
         for name,value in kwargs.items():
