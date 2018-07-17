@@ -60,9 +60,17 @@ def gradient_obtain(coordsY,coordsX,category,base,repeat):
              #  base += -1
             #   print(base)
            #  category = "poly"
-            print(Obtained_Values[repeat][0]/math.factorial(base))
+            CoefficientFirst = Obtained_Values[repeat][0]/math.factorial(base)
+            X_subtract = Data(list(map(lambda x:(x**base)*CoefficientFirst,coordsX)))
+            print(X_subtract)
+            print("___")
+            Y_new = coordsY - X_subtract
             
-           
+            print(Y_new)
+            Equation = str(CoefficientFirst)+"x**"+str(base)
+            if gradient_calculator(Y_new, coordsX,0)[0] == 0:
+                Equation += " +" + str(Y_new[0])
+                print(Equation)
                #if base == 1:
                    #Fact = math.factorial(base)
                   # Coefficient *= Fact
@@ -132,6 +140,16 @@ class Data(list):
     def __itruediv__(self,other):
         self *= (1/other)
         return self
+    def __sub__(self,other):
+        New_Data = []
+        list_other = list(other)
+        while len(list_other) != len(self) or len(list_other) < len(self):
+            list_other*=2
+        if type(other) == Data:
+            for i in range(len(self)):
+                New_Data.append(self[i] - list_other[i])
+        return New_Data
+                
     
     
         
@@ -149,7 +167,7 @@ class Graph:
         for name,value in kwargs.items():
             setattr(self,name,value)
         self.gradient = gradient_obtain(self.coordsY,self.coordsX,self.category,self.base,0)
-        print(self.gradient)
+        print("GRAD:",self.gradient)
         
     def transform(self,ruleX,ruleY):
         print("coords have been mapped")
@@ -157,7 +175,7 @@ class Graph:
     def set_equation(self,equation):
         self.transform()
         
-A = Graph(coords = [(0,5),(1,6),(2,13),(3,32),(4,69),(5,130),(6,(6*36)+5)])
+A = Graph(coords = [(0,5),(1,5),(2,14),(3,31),(4,75),(5,125),(6,(6*36)+4)])
 A.get_equation(category = "poly",base = 3)
 
 
