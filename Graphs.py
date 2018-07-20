@@ -59,16 +59,38 @@ class Data(list): #this is the data class which shall serve as the data structur
                   #inherits from list due to the shared functionality; differs in terms of operations however.
     
     def __new__(self,data):
-        if type(data) != list or any(type(item) not in [int,float,complex] for item in data): #used to prevent 'incorrect values' for data within the data structure (only allows for numerical values) and no multiple dimensionals
+        if any(type(item) not in [int,float,complex] for item in data): #used to prevent 'incorrect values' for data within the data structure (only allows for numerical values) and no multiple dimensionals
             raise TypeError("expected appropriate numerical list data")
         return super().__new__(self,data) #returns a new subtype instance of list
     
     def __init__(self,data): #initialises the data subclass instance
         for item in data:
             self.append(item)
+
+    def lengthen(self,other):
+        list_other = list(other) #converts other item into a list for list mutiplication method (data duplication)
+        while len(list_other) != len(self) or len(list_other) < len(self): #performs list data duplication until there are an equal or greater count of values within the other data structure than that of the Data
+            list_other*=2
+        return list_other
             
     def __mul__(self,other): #multiplies the values of data by a value and returns new Data
-        return Data(list(map(lambda item: item*other,self)))
+        New_Data = []
+        if type(other) in [int,float,complex]:
+            New_Data = list(map(lambda x:x*other, self))
+            
+        elif type(other) == Data:
+            list_other = self.lengthen(other)
+            for i in range(len(self)):
+                New_Data.append(self[i] * list_other[i])
+        elif type(other) == list:
+            New_Data = [list(self)*item for item in other]
+        else:
+            raise TypeError("unexpected multiplier type")
+
+        if any(type(item) == list for item in New_Data):
+            return tuple((Data(item) for item in New_Data))
+        elif all(type(item) in [int,float,complex] for item in New_Data): 
+            return Data(New_Data)
     
     def __imul__(self,other): #performs multiplication method however, returns value as self
         New_Data = self * (other)
@@ -76,21 +98,50 @@ class Data(list): #this is the data class which shall serve as the data structur
         return self
     
     def __truediv__(self,other): #performs 'inverse' multiplication method
-        return self * (1/other)
+        New_Data = []
+        if type(other) in [int,float,complex]:
+            New_Data += self * (1/other)
+        elif type(other) == Data:
+            New_Data += self * Data(list(map(lambda x:1/x,other)))
+        else:                                                       
+            raise TypeError("unexpected divisor type")
+        return Data(New_Data)                         
     
     def __itruediv__(self,other): #performs 'inverse' self-multiplication method
-        self *= (1/other)
+        New_Data = self / (other)
+        self = New_Data
         return self
     
-    def __sub__(self,other): 
+    def __add__(self,other): 
         New_Data = []
-        list_other = list(other) #converts other item into a list for list mutiplication method (data duplication)
-        while len(list_other) != len(self) or len(list_other) < len(self): #performs list data duplication until there are an equal or greater count of values within the other data structure than that of the Data
-            list_other*=2 
-        if type(other) == Data: #performs Data subtraction method (subtracts each value in Data by that of the corresponding value in Other)
+        if type(other) in [int,float,complex]:
+            New_Data = list(map(lambda x:x+other, self))
+        elif type(other) == Data: #performs Data subtraction method (subtracts each value in Data by that of the corresponding value in Other)
+            list_other = self.lengthen(other)
             for i in range(len(self)):
-                New_Data.append(self[i] - list_other[i])    
+                New_Data.append(self[i] + list_other[i])
+        else:
+            raise TypeError("unexpected addition type")
         return Data(New_Data)
+    def __iadd__(self,other):
+        New_Data = self + other
+        self = New_Data
+        return self
+    def __sub__(self,other):
+        if type(other) in [int,float,complex]:
+            New_Data = self + (-1*other)
+        elif type(other) == Data:
+            New_Data = self + Data(list(map(lambda x: -1*x, other)))
+        else:
+            raise TypeError("unexpected addition type")
+        return New_Data
+    def __isub__(self,other):
+        New_Data = self - other
+        self = New_Data
+        return self
+        
+        
+    
                 
 class Graph:
     
@@ -130,6 +181,9 @@ Curve2 = Graph(coords = [(-1,-11),(0,1),(1,13),(2,169),(3,973)])
 Curve2.get_equation(category = "poly")
 # base is determined by maximum index
 
-Curve2 = Graph(coords = [(-1,-11),(0,1),(1,13),(2,169),(3,973)])
+Curve2_alt = Graph(coords = [(-1,-11),(0,1),(1,13),(2,169),(3,973),(4,3649)])
 # facinating; different curve, passes through same coordinates
 # more values -> higher fine tuning
+Curve2_alt.get_equation(category = "poly")
+Curve2_alt2 = Graph(coords = [(-1,-11),(0,1),(1,13),(2,169),(3,973),(4,3649),(5,10501)])
+Curve2_alt2.get_equation(category = "poly")
