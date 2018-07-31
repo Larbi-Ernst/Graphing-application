@@ -3,8 +3,8 @@ class Container(list): #this is the data class which shall serve as the data str
     def __new__(self,data):
 
         self.Accepted_Types = [int,float,complex]
-        if any(type(item) not in self.Accepted_Types for item in data): #used to prevent 'incorrect values' for data within the data structure (only allows for numerical values) and no multiple dimensionals
-            raise TypeError("expected appropriate type(s) for 'MagicBox.Container': int, float or complex")
+        if type(data) != list or any(type(item) not in self.Accepted_Types for item in data): #used to prevent 'incorrect values' for data within the data structure (only allows for numerical values) and no multiple dimensionals
+            raise TypeError("expected appropriate type(s) for 'Container': int, float or complex")
 
         return super().__new__(self,data) #returns a new subtype instance of list
                             
@@ -48,7 +48,7 @@ class Container(list): #this is the data class which shall serve as the data str
                     
             
         else:
-            raise TypeError("unsupported operand type(s) for *: 'MagicBox.{Self_Type}'".format(Self_Type = self.Self_Type)," and '{Other_Type}'".format(Other_Type = type(other).__name__))
+            raise TypeError("unsupported operand type(s) for *: '{Self_Type}'".format(Self_Type = self.Self_Type)," and '{Other_Type}'".format(Other_Type = type(other).__name__))
 
         if any(type(Value) in [list,tuple] for Value in New_Data):
             return tuple((Container(List) for List in New_Data))
@@ -69,7 +69,7 @@ class Container(list): #this is the data class which shall serve as the data str
             New_Data += self * (1/other)
             
         elif type(other) == self.Self_Type:
-            New_Data += self * Data(list(map(lambda x:1/x,other)))
+            New_Data += self * Container(list(map(lambda x:1/x,other)))
             
         else:                                                       
             raise TypeError("unsupported operand type(s) for /: '{Self_Type}'".format(Self_Type = self.Self_Type),"and '{Other_Type}'".format(Other_Type = type(other).__name__))
