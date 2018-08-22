@@ -16,7 +16,7 @@ def EquationQuery(Function):
         
         
 if __name__ == "__main__":
-    ValueQuery()
+    EquationQuery()
 
         
             
