@@ -10,7 +10,7 @@ def linear_equation(coordsY, coordsX) -> str:
     yIntercept = coordsY[2]-(bestFitGrad*coordsX[2]) 
     """this calculates the y-intercept via rearrangement of y = mx +c (can utilise any coordinate)"""
     potential_equation = str(bestFitGrad)+"x+"+str(yIntercept) #stores the equation in string format
-    print(potential_equation)
+
     return potential_equation
 
 
@@ -72,6 +72,3 @@ def expontential_grad():
             exponential_power.append(math.log(coordsY[i],coordsX[i]))
         except:
             continue
-        
-    print(exponential_power)
-    print(sum(exponential_power)/len(exponential_power))
