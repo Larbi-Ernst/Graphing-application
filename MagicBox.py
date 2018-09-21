@@ -1,4 +1,4 @@
-class Container(list): #this is the data class which shall serve as the data structure used to store graph coordinate data
+class Container(list):  #this is the data class which shall serve as the data structure used to store graph coordinate data
                   #inherits from list due to the shared functionality; differs in terms of operations however.
     def __new__(self,data):
 
@@ -29,7 +29,19 @@ class Container(list): #this is the data class which shall serve as the data str
     
     def __repr__(self):
 
-        return f'Container({self[:]})'
+        return f'Container({super().__repr__()})'
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return Container(super().__getitem__(key))
+        elif isinstance(key, int):
+            if key < 0:
+                key += len(self)
+            elif key >= len(self):
+                raise IndexError
+            return super().__getitem__(key)
+        else:
+            raise TypeError
 
     def __pow__(self,other):
 

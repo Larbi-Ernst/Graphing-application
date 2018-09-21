@@ -1,74 +1,72 @@
 #differential functions
 import math
-import MagicBox
-def linear_equation(coordsY, coordsX) -> str:
 
-    gradients = gradient_calculator(coordsY,coordsX,base) 
+import MagicBox
+
+def linear_equation(y_coords, x_coords) -> str:
+
+    gradients = gradient_calculator(y_coords,x_coords,base) 
     """this utilises the gradient_calculator function to calculate the linear gradient"""
-    bestFitGrad = round(sum(gradients)/len(gradients),5) 
+    best_fit_grad = round((sum(gradients)/len(gradients)),5) 
     """this rounds the value of the gradient to 5 decimal points, a suitable approximation"""
-    yIntercept = coordsY[2]-(bestFitGrad*coordsX[2]) 
+    y_intercept = y_coords[2]-(best_fit_grad*x_coords[2]) 
     """this calculates the y-intercept via rearrangement of y = mx +c (can utilise any coordinate)"""
-    potential_equation = str(bestFitGrad)+"x+"+str(yIntercept) #stores the equation in string format
+    potential_equation = str(best_fit_grad)+"x+"+str(y_intercept) #stores the equation in string format
 
     return potential_equation
 
-
-
-def gradient_calculator(coordsY, coordsX):
-    
-    gradients = [] 
+def gradient_calculator(y_coords, x_coords): 
     """stores all of the Y1-Y2/X1-X2 where Y,X represent the lists coordsY and coordsX respectively"""
-  
-    for i in range(0,math.floor(len(coordsY))-1):
-        gradient = (coordsY[i+1]-coordsY[i])/(coordsX[i+1]-coordsX[i])
-        gradients.append(gradient)
+    gradients = ((y_coords[1:len(y_coords)] - y_coords[0:len(y_coords)-1])
+                /(x_coords[1:len(x_coords)] - x_coords[0:len(x_coords)-1]))
+                
     return gradients
     """returns all of the values for gradients -> can be further utilised within linear and non-linear equation calculation"""
              
-def equation_obtain(coordsY, coordsX, category: str,Base: int, Repeat_Count: int): 
+def equation_obtain(y_coords, x_coords, category: str, base: int, repeat_count: int): 
     """the base is the highest power, Category determines which equation function shall be used"""
-
-    Return_Values = []
-    Obtained_Values = [coordsY]
-
+    
+    return_values = []
+    obtained_values = [y_coords]
+    
     if category == "poly":
-
-        while Repeat_Count != Base:
-            Obtained_Values.append(gradient_calculator(Obtained_Values[Repeat_Count],coordsX))
-            Repeat_Count+=1
-
-            CoefficientFirst = Obtained_Values[Repeat_Count][0]/math.factorial(Base) 
+    
+        while repeat_count != base:
+            """this checks if the ammount of recursions is sufficient for the return value to be the correct coefficient (used above)"""
+            
+            obtained_values.append(gradient_calculator(obtained_values[repeat_count], x_coords))
+            repeat_count+=1
+        
+            coefficient = obtained_values[repeat_count][0]/math.factorial(base) 
             """once the 'base derivative' has been calculated, the value shall be Factorial(Base)*Coefficient"""
             
-            X_subtract = MagicBox.Container(list(map(lambda x:(x**Base)*CoefficientFirst,coordsX))) 
+            x_subtract = MagicBox.Container(list(map(lambda x:(x**base)*coefficient,x_coords))) 
             """Substitutes all X values into the first term"""
             
-            Y_new = coordsY - X_subtract #First term is subtracted from base Y coordinates
+            y_new = y_coords - x_subtract #First term is subtracted from base Y coordinates
             
-            Lower_Base_Value = equation_obtain(Y_new,coordsX,"poly",Base-1,0) 
+            lower_base_term = equation_obtain(y_new,x_coords,"poly",base-1,0) 
             """recursive process is repeated until all coefficients are found"""
             
-            if Lower_Base_Value is not None: 
+            if lower_base_term is not None: 
                 """checks if the returned values have been obtained (only obtained when correct recursive count is met)"""
-                Return_Values = (Lower_Base_Value)
-
-            if gradient_calculator(Y_new, coordsX)[0] == 0 and Base == 1: 
+                return_values = (lower_base_term)
+        
+            if gradient_calculator(y_new, x_coords)[0] == 0 and base == 1: 
                 """this checks if the previous terms power was 1 and the gradient of the values is 0 (as they should be the same)"""
                 
-                Return_Values.append((0,Y_new[0]))#Y_new[0] shall be the Y-Intercept in this case
-                    
-            if Base == Repeat_Count: 
-                """this checks if the ammount of recursions is sufficient for the return value to be the correct coefficient (used above)"""
+                return_values.append((0,y_new[0]))#Y_new[0] shall be the Y-Intercept in this case
+                     
                 
-                Return_Values.append((Base,CoefficientFirst)) #adds all of the data about the term to the return values list
-                return Return_Values #returns them for the user
+                
+            return_values.append((base,coefficient)) #adds all of the data about the term to the return values list
+            return return_values #returns them for the user
             
 def expontential_grad():
     
     exponential_power = [] 
-    for i in range(0,len(coordsY)):
+    for i in range(0,len(y_coords)):
         try:
-            exponential_power.append(math.log(coordsY[i],coordsX[i]))
+            exponential_power.append(math.log(y_coords[i],x_coords[i]))
         except:
             continue

@@ -1,20 +1,20 @@
 #decorators below; these may be used to modify all methods (both special and self-defined) as well as subroutines in the main file
 
 
-def EquationQuery(func):
+def equation_query(func):
 
-    def Wrapper(self,**kwargs):
+    def wrapper(self,**kwargs):
       
         if type(self.equation).__name__ == "Equation":
             return self.equation
         else:
             func(self,**kwargs)
             
-    return Wrapper
+    return wrapper
         
         
 if __name__ == "__main__":
-    EquationQuery()
+    equation_query()
 
         
             
