@@ -1,2 +1,2 @@
 # Graphing-application
-A graphing application made with C#, Xaml (.Net framework) and Python
+A graphing application made with Python (JavaScript Web App WIP)
